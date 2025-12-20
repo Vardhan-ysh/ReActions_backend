@@ -9,7 +9,7 @@ export interface WSContext {
   roomId?: string;
 }
 
-const clients = new Map<WebSocket, WSContext>();
+export const clients = new Map<WebSocket, WSContext>();
 
 export function initWebSocketServer(server: any) {
   const wss = new WebSocketServer({ server });

@@ -15,8 +15,8 @@ export function handleMessage(ctx: WSContext, raw: string) {
   }
 
   switch (message.type) {
-    case 'PING':
-      ctx.socket.send(JSON.stringify({ type: 'PONG' }));
+    case 'TEST':
+      ctx.socket.send(JSON.stringify({ type: 'CONNECTED' }));
       break;
 
     case 'JOIN_GAME':

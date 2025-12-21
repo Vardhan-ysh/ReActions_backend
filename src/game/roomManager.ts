@@ -6,7 +6,7 @@ export function createRoom(roomId: string): Room {
   const room: Room = {
     roomId,
     players: [],
-    state: GameState.WAITING,
+    state: 'WAITING',
     round: 0,
   };
 
@@ -31,6 +31,6 @@ export function addPlayerToRoom(room: Room, playerId: string, name: string) {
   room.players.push(player);
 
   if (room.players.length === 2) {
-    room.state = GameState.READY;
+    room.state = 'READY';
   }
 }

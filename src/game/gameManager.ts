@@ -1,7 +1,7 @@
-import { GameState, Player, Room } from '../types/game.js';
+import { GameState, Player, Room, PromptType } from '../types/game.js';
 import { createRoom, getRoom, addPlayerToRoom } from './roomManager.js';
 import { Connection, setRoom } from '../ws/connectionRegistry.js';
-import { BroadcastType } from '../types/ws.js';
+import { BroadcastType, WebSocketResponse } from '../types/ws.js';
 import { broadcast } from '../ws/wsServer.js';
 
 const WIN_SCORE = 5;
@@ -19,20 +19,20 @@ export function joinGame(
   addPlayerToRoom(room, connection.playerId, name);
   setRoom(connection.playerId, id);
 
-  connection.socket.send(
-    JSON.stringify({
-      type: BroadcastType.JOINED,
-      payload: { roomId: id, playerId: connection.playerId },
-    })
-  );
+  const response: WebSocketResponse = {
+    type: BroadcastType.JOINED,
+    payload: { roomId: id, playerId: connection.playerId },
+  };
 
-  if (room.state === GameState.READY) {
+  connection.socket.send(JSON.stringify(response));
+
+  if (room.state === 'READY') {
     startGame(room);
   }
 }
 
 function startGame(room: Room) {
-  room.state = GameState.COUNTDOWN;
+  room.state = 'COUNTDOWN';
 
   broadcast(room.roomId, {
     type: BroadcastType.GAME_STATE,
@@ -44,7 +44,7 @@ function startGame(room: Room) {
 
 function startRound(room: Room) {
   room.round += 1;
-  room.state = GameState.PROMPT;
+  room.state = 'PROMPT';
 
   room.promptStartTime = Date.now();
 
@@ -53,16 +53,20 @@ function startRound(room: Room) {
     p.reactionTime = undefined;
   });
 
+  const promptTypes = Object.values(PromptType);
+  const randomPromptType =
+    promptTypes[Math.floor(Math.random() * promptTypes.length)];
+
   broadcast(room.roomId, {
     type: BroadcastType.PROMPT,
-    payload: { round: room.round, prompt: { type: 'CLICK_NOW' } },
+    payload: { round: room.round, prompt: { type: randomPromptType } },
   });
 }
 
 export function handlePlayerAction(connection: Connection) {
   if (!connection.roomId) return;
   const room = getRoom(connection.roomId);
-  if (!room || room.state !== GameState.PROMPT) return;
+  if (!room || room.state !== 'PROMPT') return;
 
   const player = room.players.find((p) => p.playerId === connection.playerId);
   if (!player || player.reacted) return;
@@ -76,7 +80,7 @@ export function handlePlayerAction(connection: Connection) {
 }
 
 function finishRound(room: Room) {
-  room.state = GameState.RESULT;
+  room.state = 'RESULT';
 
   const sorted: Player[] = [...room.players].sort(
     (a, b) => (a.reactionTime ?? 9999) - (b.reactionTime ?? 9999)
@@ -104,7 +108,7 @@ function finishRound(room: Room) {
 }
 
 function endGame(room: Room, winnerId: string) {
-  room.state = GameState.FINISHED;
+  room.state = 'FINISHED';
 
   broadcast(room.roomId, {
     type: BroadcastType.GAME_OVER,

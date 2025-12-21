@@ -1,10 +1,15 @@
-export enum GameState {
-  WAITING = 'WAITING',
-  READY = 'READY',
-  COUNTDOWN = 'COUNTDOWN',
-  PROMPT = 'PROMPT',
-  RESULT = 'RESULT',
-  FINISHED = 'FINISHED',
+export type GameState =
+  | 'WAITING'
+  | 'READY'
+  | 'COUNTDOWN'
+  | 'PROMPT'
+  | 'RESULT'
+  | 'FINISHED';
+
+export enum PromptType {
+  CLICK_HERE = 'CLICK_HERE',
+  PRESS_KEY = 'PRESS_KEY',
+  TYPING = 'TYPING',
 }
 
 export interface Player {

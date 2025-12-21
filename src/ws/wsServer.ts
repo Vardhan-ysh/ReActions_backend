@@ -7,7 +7,7 @@ import {
   getConnection,
   Connection,
 } from './connectionRegistry.js';
-import { BroadcastMessage } from '../types/ws.js';
+import { WebSocketResponse } from '../types/ws.js';
 import { getRoom } from '../game/roomManager.js';
 import { handleMessage } from './wsHandler.js';
 
@@ -33,7 +33,7 @@ export function initWebSocketServer(server: http.Server) {
   });
 }
 
-export function broadcast(roomId: string, message: BroadcastMessage) {
+export function broadcast(roomId: string, message: WebSocketResponse) {
   const data = JSON.stringify(message);
 
   const room = getRoom(roomId);

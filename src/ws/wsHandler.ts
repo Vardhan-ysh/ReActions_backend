@@ -1,4 +1,7 @@
 import type { Connection } from './connectionRegistry.js';
+import { joinGame, handlePlayerAction } from '../game/gameManager.js';
+
+import { BroadcastType } from '../types/ws.js';
 
 interface WSMessage {
   type: string;
@@ -16,11 +19,11 @@ export function handleMessage(connection: Connection, raw: string) {
 
   switch (message.type) {
     case 'TEST':
-      connection.socket.send(JSON.stringify({ type: 'CONNECTED' }));
+      connection.socket.send(JSON.stringify({ type: BroadcastType.CONNECTED }));
       break;
 
     case 'JOIN_GAME':
-      // will call gameManager.join()
+      joinGame(connection, message.payload.name, message.payload.roomId);
       console.log('JOIN_GAME from', connection.playerId);
       break;
 
@@ -29,7 +32,7 @@ export function handleMessage(connection: Connection, raw: string) {
       break;
 
     case 'PLAYER_ACTION':
-      // gameManager.handleAction later
+      handlePlayerAction(connection);
       break;
 
     default:

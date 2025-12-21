@@ -1,34 +1,47 @@
 import { WebSocketServer } from 'ws';
-import type { WebSocket } from 'ws';
-import { handleMessage } from './wsHandler.js';
 import { v4 as uuid } from 'uuid';
+import http from 'http';
+import {
+  addConnection,
+  removeConnection,
+  getConnection,
+  Connection,
+} from './connectionRegistry.js';
+import { BroadcastMessage } from '../types/ws.js';
+import { getRoom } from '../game/roomManager.js';
+import { handleMessage } from './wsHandler.js';
 
-export interface WSContext {
-  socket: WebSocket;
-  playerId: string;
-  roomId?: string;
-}
-
-export const clients = new Map<WebSocket, WSContext>();
-
-export function initWebSocketServer(server: any) {
+export function initWebSocketServer(server: http.Server) {
   const wss = new WebSocketServer({ server });
 
   wss.on('connection', (socket) => {
-    const context: WSContext = {
+    const playerId = uuid();
+    const context: Connection = {
+      playerId,
       socket,
-      playerId: uuid(),
     };
 
-    clients.set(socket, context);
+    addConnection(context);
 
     socket.on('message', (data) => {
       handleMessage(context, data.toString());
     });
 
     socket.on('close', () => {
-      clients.delete(socket);
-      // later: cleanup room, notify opponent
+      removeConnection(playerId);
     });
+  });
+}
+
+export function broadcast(roomId: string, message: BroadcastMessage) {
+  const data = JSON.stringify(message);
+
+  const room = getRoom(roomId);
+  if (!room) return;
+
+  room.players.forEach((p) => {
+    const connection = getConnection(p.playerId);
+    if (!connection) return;
+    connection.socket.send(data);
   });
 }

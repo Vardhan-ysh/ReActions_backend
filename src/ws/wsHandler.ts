@@ -1,11 +1,11 @@
-import type { WSContext } from './wsServer.js';
+import type { Connection } from './connectionRegistry.js';
 
 interface WSMessage {
   type: string;
   payload?: any;
 }
 
-export function handleMessage(ctx: WSContext, raw: string) {
+export function handleMessage(connection: Connection, raw: string) {
   let message: WSMessage;
 
   try {
@@ -16,12 +16,12 @@ export function handleMessage(ctx: WSContext, raw: string) {
 
   switch (message.type) {
     case 'TEST':
-      ctx.socket.send(JSON.stringify({ type: 'CONNECTED' }));
+      connection.socket.send(JSON.stringify({ type: 'CONNECTED' }));
       break;
 
     case 'JOIN_GAME':
       // will call gameManager.join()
-      console.log('JOIN_GAME from', ctx.playerId);
+      console.log('JOIN_GAME from', connection.playerId);
       break;
 
     case 'CHAT_MESSAGE':

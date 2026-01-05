@@ -8,7 +8,10 @@ export enum BroadcastType {
   PROMPT = 'PROMPT',
   ROUND_RESULT = 'ROUND_RESULT',
   GAME_OVER = 'GAME_OVER',
+<<<<<<< HEAD
   ROOM_CREATED = 'ROOM_CREATED',
+=======
+>>>>>>> 79d5c1d7aca90b367594eeec8bd01b34a26ddb26
 }
 
 export interface ConnectedResponse {
@@ -55,6 +58,7 @@ export interface GameOverResponse {
   };
 }
 
+<<<<<<< HEAD
 export interface RoomCreatedResponse {
   type: BroadcastType.ROOM_CREATED;
   payload: {
@@ -64,13 +68,19 @@ export interface RoomCreatedResponse {
   };
 }
 
+=======
+>>>>>>> 79d5c1d7aca90b367594eeec8bd01b34a26ddb26
 export type WebSocketResponse =
   | ConnectedResponse
   | JoinedResponse
   | GameStateResponse
   | PromptResponse
   | RoundResultResponse
+<<<<<<< HEAD
   | GameOverResponse
   | RoomCreatedResponse;
 
 
+=======
+  | GameOverResponse;
+>>>>>>> 79d5c1d7aca90b367594eeec8bd01b34a26ddb26

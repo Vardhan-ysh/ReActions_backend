@@ -23,4 +23,8 @@ coverage/
 
 # OS files
 .DS_Store
+<<<<<<< HEAD
 Thumbs.db
+=======
+Thumbs.db
+>>>>>>> 79d5c1d7aca90b367594eeec8bd01b34a26ddb26

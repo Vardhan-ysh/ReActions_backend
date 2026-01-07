@@ -6,31 +6,6 @@ import { broadcast } from '../ws/wsServer.js';
 
 const WIN_SCORE = 5;
 
-export function joinGame(
-  connection: Connection,
-  name: string,
-  roomId?: string
-) {
-  const id = roomId ?? crypto.randomUUID();
-
-  let room = getRoom(id);
-  if (!room) room = createRoom(id);
-
-  addPlayerToRoom(room, connection.playerId, name);
-  setRoom(connection.playerId, id);
-
-  const response: WebSocketResponse = {
-    type: BroadcastType.JOINED,
-    payload: { roomId: id, playerId: connection.playerId },
-  };
-
-  connection.socket.send(JSON.stringify(response));
-
-  if (room.state === 'READY') {
-    startGame(room);
-  }
-}
-
 function startGame(room: Room) {
   room.state = 'COUNTDOWN';
 
@@ -114,4 +89,10 @@ function endGame(room: Room, winnerId: string) {
     type: BroadcastType.GAME_OVER,
     payload: { winnerPlayerId: winnerId },
   });
+}
+
+export function startGameIfReady(room: Room) {
+  if (room.state === "READY") {
+    startGame(room);
+  }
 }

@@ -9,6 +9,8 @@ export enum BroadcastType {
   ROUND_RESULT = 'ROUND_RESULT',
   GAME_OVER = 'GAME_OVER',
   ROOM_CREATED = 'ROOM_CREATED',
+  MATCH_WAITING = 'MATCH_WAITING',
+  ERROR = 'ERROR',
 }
 
 export interface ConnectedResponse {
